@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+
+  "name": "Shortcuts",
+  "description": "Like Shortcut Bookmarks, but with image icons instead of text! So far, has: SHOR, SWCH, RPR, REG, REG1, LOG, MOS, DUP, DEC, IDEC, DL, DLR, GTO, TRK, MOD, and MUDA.",
+  "version": "0.17",
+
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html",
+    "default_title": "Click to open, click an image to execute"
+  },
+
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+
+  "permissions": [
+    "tabs",
+    "webRequest",
+    "webRequestBlocking",
+    "*://*.tourisminvestment.com.au/*",
+    "*://*.tour-aus.aws.haylix.net/*",
+    "*://*.aussiespecialist.com/*",
+    "*://*.aussiespecialist.cn/*",
+    "*://*.australia.com/*",
+    "*://*.australia.cn/*"
+  ]
+}
