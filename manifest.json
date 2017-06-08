@@ -2,8 +2,8 @@
   "manifest_version": 2,
 
   "name": "Shortcuts",
-  "description": "Like Shortcut Bookmarks, but with image icons instead of text! Has all sixteen. SHOR, SWCH are now multitargeting!",
-  "version": "0.19",
+  "description": "Like Shortcut Bookmarks, but with image icons instead of text! Has all sixteen, also multitargeting! Testing Pending.",
+  "version": "0.21",
 
   "browser_action": {
     "default_icon": "img/icon.png",
