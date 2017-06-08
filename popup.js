@@ -24,19 +24,20 @@ function open(url, newtab, index) {
 }
 
 function eval(code, id, file) {
+  var oj = file ? {
+    file: file
+  } : {
+    code: code
+  };
   if (id === undefined) {
     return thistab(tb => {
       return new Promise((resolve, reject) => {
-        chrome.tabs.executeScript(tb.id, {
-          file ? 'file' : 'code': code,
-        }, resolve);
+        chrome.tabs.executeScript(tb.id, oj, resolve);
       });
     });
   } else {
     return new Promise((resolve, reject) => {
-      chrome.tabs.executeScript(id, {
-        file ? 'file' : 'code': code
-      }, resolve);
+      chrome.tabs.executeScript(id, oj, resolve);
     });
   }
 }
@@ -317,7 +318,10 @@ function DLR(evf) {
   var low = evf.ctrlKey ? "500px" : "0px";
   thistab(tb => {
     var myid = tb.id;
-    if (bg.postMessage('method': 'toggleDLRTab', 'arguments': [myid])) {
+    if (bg.postMessage({
+        'method': 'toggleDLRTab',
+        'arguments': [myid]
+      })) {
       return eval(
         "var scr=document.createElement(\"script\");scr.id=\"DLRscrtag\",scr.innerText='" +
         "document.getElementById(\"DLRscrtag\").remove();function" +
