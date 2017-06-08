@@ -1,34 +1,45 @@
 <html>
 <head>
   <script src="popup.js"></script>
-  <style>img{width: 128px; border: red solid 1px;}</style>
+  <style>img{width: 128px; border: red solid 1px;}
+  #prompt{position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;
+     background-color: rgba(128, 128, 128, 0.5); text-align: center;}
+  #wrap{max-width: 75%; margin: auto; margin-top: 3em; background-color: #eee; padding: 1em; border: #ccc 2px solid; border-radius: 5px;}
+  #msg{margin-bottom: 1em;}
+  #input{}</style>
 </head>
 <body>
-  <table>
+  <table id="table">
     <tr>
-      <td><img id="SHOR" alt="SHOR" class="mybtn" src="SHOR.png" title="Opens a page. Pick from any combination of (DEV, UAT, Staging, and Production), (Direct Author, Balanced Author, Publisher One, Publisher Two, Dispatcher One, Dispatcher Two, Dispatcher Load Balancer, and Akamai Domain), and (Aus.com, ASP, Investment Site, Business Events, and Corporate Site). Ctrl-Click to open it in a new tab, otherwise, opens in current tab." /></td>
-      <td><img id="SWCH" alt="SWCH" class="mybtn" src="SWCH.png" title="Opens the current page in another instance. Can choose to switch between the Direct Author, Balanced Author, Publisher One, Publisher Two, Dispatcher One, Dispatcher Two and Dispatcher Load Balancer. Ctrl-Click to open it in a new tab, otherwise, opens in current tab." /></td>
-      <td><img id="RPR" alt="RPR" class="mybtn" src="RPR.png" title="Expands Shortform Links on the Publishers. Choose a site to redirect to, and that tab will automatically be redirected for the duration of its session. To disable this redirection on a tab, submit the form with a blank entry." /></td>
-      <td><img id="DL" alt="DL" class="mybtn" src="DL.png" title="Adds a panel to the page, shows the current contents of the dataLayer_Event. Clicking outside of the panel will dismiss it. Ctrl-Click to open it a bit lower down, so as to not obstruct the header." /></td>
+      <td><img id="SHOR" alt="SHOR" class="mybtn" src="img/SHOR.png" title="Opens a page. Pick from any combination of (DEV, UAT, Staging, and Production), (Direct Author, Balanced Author, Publisher One, Publisher Two, Dispatcher One, Dispatcher Two, Dispatcher Load Balancer, and Akamai Domain), and (Aus.com, ASP, Investment Site, Business Events, and Corporate Site). Ctrl-Click to open it in a new tab, otherwise, opens in current tab." /></td>
+      <td><img id="SWCH" alt="SWCH" class="mybtn" src="img/SWCH.png" title="Opens the current page in another instance. Can choose to switch between the Direct Author, Balanced Author, Publisher One, Publisher Two, Dispatcher One, Dispatcher Two and Dispatcher Load Balancer. Ctrl-Click to open it in a new tab, otherwise, opens in current tab." /></td>
+      <td><img id="RPR" alt="RPR" class="mybtn" src="img/RPR.png" title="Automatically expands Shortform Links on the Publishers. Activate on an actual page on a Publisher (that is, *not* the error message) to toggle this effect." /></td>
+      <td><img id="DL" alt="DL" class="mybtn" src="img/DL.png" title="Adds a panel to the page, shows the current contents of the dataLayer_Event. Clicking outside of the panel will dismiss it. Ctrl-Click to open it a bit lower down, so as to not obstruct the header." /></td>
     </tr>
     <tr>
-      <td><img id="REG" alt="REG" class="mybtn" src="REG.png" title="Used on the ASP Registration page, will register a new user: fills out the form and submits it." /></td>
-      <td><img id="REG1" alt="REG1" class="mybtn" src="REG1.png" title="Used on the ASP Registration page, will almost register a new user: fills out the form, but doesn't submit it. In case some manual/custom values are needed." /></td>
-      <td><img id="LOG" alt="LOG" class="mybtn" src="LOG.png" title="Logs in to ASP. Enter either a Username whose password is Welcome1, or a Username and Password separated by either a space, a tab, or a comma, as you would expect of copying from a spreadsheet or a csv file." /></td>
-      <td><img id="DLR" alt="DLR" class="mybtn" src="DLR.png" title="Adds a panel to the page, shows the current contents of the dataLayer_Event, and supresses navigation away from the page. Clicking (in or outside of the panel) will update it, to dismiss it and reenable navigation, hit this button again.  Ctrl-Click to open it a bit lower down, so as to not obstruct the header." /></td>
+      <td><img id="REG" alt="REG" class="mybtn" src="img/REG.png" title="Used on the ASP Registration page, will register a new user: fills out the form and submits it." /></td>
+      <td><img id="REG1" alt="REG1" class="mybtn" src="img/REG1.png" title="Used on the ASP Registration page, will almost register a new user: fills out the form, but doesn't submit it. In case some manual/custom values are needed." /></td>
+      <td><img id="LOG" alt="LOG" class="mybtn" src="img/LOG.png" title="Logs in to ASP. Enter either a Username whose password is Welcome1, or a Username and Password separated by either a space, a tab, or a comma, as you would expect of copying from a spreadsheet or a csv file." /></td>
+      <td><img id="DLR" alt="DLR" class="mybtn" src="img/DLR.png" title="Adds a panel to the page, shows the current contents of the dataLayer_Event, and supresses navigation away from the page. Clicking (in or outside of the panel) will update it, to dismiss it and reenable navigation, hit this button again.  Ctrl-Click to open it a bit lower down, so as to not obstruct the header." /></td>
     </tr>
     <tr>
-      <td><img id="MOS" alt="MOS" class="mybtn" src="MOS.png" title="Opens every link in a Mosaic or a Sitemap in a new tab. Expect delays if used on a large page." /></td>
-      <td><img id="DUP" alt="DUP" class="mybtn" src="DUP.png" title="Opens the current page in every available locale, and a few which may not be available. Expect Delays." /></td>
-      <td><img id="DEC" alt="DEC" class="mybtn" src="DEC.png" title="Adds the Query Parameter to the url of the current tab. For bypassing dispatcher/akamai caches." /></td>
-      <td><img id="IDEC" alt="IDEC" class="mybtn" src="IDEC.png" title="Adds the Query Parameter to the src of every image on the page. For bypassing dispatcher/akamai caches." /></td>
+      <td><img id="MOS" alt="MOS" class="mybtn" src="img/MOS.png" title="Opens every link in a Mosaic or a Sitemap in a new tab. Expect delays if used on a large page." /></td>
+      <td><img id="DUP" alt="DUP" class="mybtn" src="img/DUP.png" title="Opens the current page in every available locale, and a few which may not be available. Expect Delays." /></td>
+      <td><img id="DEC" alt="DEC" class="mybtn" src="img/DEC.png" title="Adds the Query Parameter to the url of the current tab. For bypassing dispatcher/akamai caches." /></td>
+      <td><img id="IDEC" alt="IDEC" class="mybtn" src="img/IDEC.png" title="Adds the Query Parameter to the src of every image on the page. For bypassing dispatcher/akamai caches." /></td>
     </tr>
     <tr>
-      <td><img id="GTO" alt="GTO" class="mybtn" src="GTO.png" title="Navigates a Training Module to a given slide. The prompt will be titled with the number of slides in the module, and will be prepopulated with the number of the current slide." /></td>
-      <td><img id="TRK" alt="TRK" class="mybtn" src="TRK.png" title="Adds a small indicator to the page, showing which slide of a Training Module you are on and how many there are in total." /></td>
-      <td><img id="MOD" alt="MOD" class="mybtn" src="MOD.png" title="Navigates a Training Module to the slide before the Finishing one. I would link it to the actual last slide, but SCORM only registers completion on user navigation, not slide loading, so you have to click the last Next Button yourself." /></td>
-      <td><img id="MUDA" alt="MUDA" class="mybtn" src="MUDA.png" title="Completes five modules immediately, promoting the user to Specialist. Note: SCORM will not believe you actually did complete them, so use MOD five times if you need that particular flagset in place." /></td>
+      <td><img id="GTO" alt="GTO" class="mybtn" src="img/GTO.png" title="Navigates a Training Module to a given slide. The prompt will be titled with the number of slides in the module, and will be prepopulated with the number of the current slide." /></td>
+      <td><img id="TRK" alt="TRK" class="mybtn" src="img/TRK.png" title="Adds a small indicator to the page, showing which slide of a Training Module you are on and how many there are in total." /></td>
+      <td><img id="MOD" alt="MOD" class="mybtn" src="img/MOD.png" title="Navigates a Training Module to the slide before the Finishing one. I would link it to the actual last slide, but SCORM only registers completion on user navigation, not slide loading, so you have to click the last Next Button yourself." /></td>
+      <td><img id="MUDA" alt="MUDA" class="mybtn" src="img/MUDA.png" title="Completes five modules immediately, promoting the user to Specialist. Note: SCORM will not believe you actually did complete them, so use MOD five times if you need that particular flagset in place." /></td>
     </tr>
   </table>
+  <div id="prompt" hidden>
+    <div id="wrap">
+      <div id="msg"></div>
+      <input id="input" type="text" />
+    </div>
+  </div>
 </body>
 </html>

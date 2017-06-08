@@ -1,70 +1,71 @@
-// General helper functions.
-function open(url, newtab, index) {
-  if (index == undefined) {
-    thistab(function(tb) {
-      newtab ? chrome.tabs.create({
-        'url': url,
-        'index': tb.index + 1
-      }) : chrome.tabs.update({
-        'url': url
-      })
-    })
-  } else {
-    newtab ? chrome.tabs.create({
-      'url': url,
-      'index': index
-    }) : chrome.tabs.update({
-      'url': url
-    })
+//Port System: Firefox can't handle incognito extensions.
+var port;
+chrome.runtime.onConnect.addListener(p => {
+  if (port) { //Juust in case you have two connections.        Delete the old one??
+    port.onMessage.removeListener(handl);
+    port = null;
   }
-}
+  port = p;
 
-function thistab(func) {
-  chrome.tabs.query({
-    active: true,
-    currentWindow: true
-  }, function(tabr) {
-    func(tabr[0])
-  });
-}
+  function handl(m) {
+    try {
+      port.sendMessage({
+        "result": window[m.method](...m.arguments)
+      });
+    } catch (e) {}
+  }
+
+  port.onMessage.addListener(handl);
+  port.onDisconnect.addListener(m => {
+    port.onMessage.removeListener(handl);
+    port = null;
+  })
+})
+
 
 // Some helper functions for the RPR button.
 fixingtabs = {};
-chrome.tabs.onUpdated.addListener(function(id, s, inf) {
-  var tenta;
-  if (fixingtabs[id] && s.status == 'loading' && ((tenta = new URL(inf.url)).origin.match(
-      /pub\d/) && !tenta.pathname.match(/^\/content\//))) {
-    chrome.tabs.update(id, {
-      url: tenta.origin + "/content/" + fixingtabs[id] + tenta.pathname.replace(
+chrome.webRequest.onBeforeRequest.addListener(detl => {
+  var nurl;
+  if (fixingtabs[detl.tabId] && ((nurl = new URL(detl.url)).origin.match(/pub\d/) && !nurl.pathname
+      .match(/^\/content\//))) {
+    console.log(nurl.origin + "/content/" + fixingtabs[detl.tabId] + nurl.pathname.replace(
+      /\/(\w\w)-(\w\w)/, "/$1_$2"));
+    return {
+      redirectUrl: nurl.origin + "/content/" + fixingtabs[detl.tabId] + nurl.pathname.replace(
         /\/(\w\w)-(\w\w)/, "/$1_$2")
-    })
+    };
   }
-});
+}, {
+  urls: [],
+  types: ['main_frame']
+}, ['blocking'])
 
-function addRPRtab(tabid, site) {
-  fixingtabs[tabid] = site;
-}
-
-function remRPRtab(tabid) {
-  delete fixingtabs[tabid];
+function toggleRPRtab(tabid, site) {
+  if (fixingtabs[tabid] === site)
+    delete fixingtabs[tabid];
+  else
+    fixingtabs[tabid] = site;
 }
 
 //Helper functions for the DLR button.
 haltingtabs = {};
-chrome.webRequest.onBeforeRequest.addListener(function(detl) {
+chrome.webRequest.onBeforeRequest.addListener(detl => {
   if (haltingtabs[detl.tabId]) {
     return {
       redirectUrl: 'javascript:void(0);'
     };
   }
 }, {
-  urls: []
+  urls: [],
+  types: ['main_frame']
 }, ["blocking"]);
 
-function addDLRTab(tabid) {
-  haltingtabs[tabid] = true;
-}
-
-function remDLRTab(tabid) {
-  delete haltingtabs[tabid];
+//Returns True if the tab was successfully added, returns False if it was deleted.
+function toggleDLRTab(tabid) {
+  if (haltingtabs[tabid]) {
+    delete haltingtabs[tabid];
+    return false;
+  } else
+    return haltingtabs[tabid] = true;
 }
