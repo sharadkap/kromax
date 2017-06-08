@@ -1,9 +1,68 @@
-bg = chrome.extension.getBackgroundPage();
-var open = bg.open,
-  thistab = bg.thistab;
+// General helper functions.
+function open(url, newtab, index) {
+  if (index === undefined) { // I sure hope you know what you're doing.
+    return thistab(tb => {
+      return new Promise((resolve, reject) => {
+        newtab ? chrome.tabs.create({
+          'url': url,
+          'index': tb.index + 1
+        }, resolve) : chrome.tabs.update(tb.id, { // Terrible idea, surely.
+          'url': url,
+        }, resolve);
+      });
+    });
+  } else {
+    return new Promise((resolve, reject) => {
+      newtab ? chrome.tabs.create({
+        'url': url,
+        'index': index
+      }, resolve) : chrome.tabs.update(index, {
+        'url': url
+      }, resolve);
+    });
+  }
+}
 
+// General helper functions.
+function prompt(msg) {
+  var input = document.getElementById('input'),
+    msgbox = document.getElementById('msg'),
+    promptbox = document.getElementById('prompt');
+  input.value = "";
+  msgbox.innerText = msg;
+  promptbox.hidden = false;
+  input.focus();
+  return new Promise((resolve, reject) => {
+    var chke = e => {
+      if (e.key === "Enter") {
+        input.removeEventListener('keydown', chke);
+        promptbox.hidden = true;
+        resolve(input.value);
+      }
+    };
+    input.addEventListener('keydown', chke);
+  });
+}
+
+// Be sure that func returns a Promise. Does the function to all selected tabs
+function thistab(func) {
+  return new Promise((resolve, reject) => {
+    chrome.tabs.query({
+      highlighted: true,
+      currentWindow: true
+    }, resolve)
+  }).then(list => {
+    var lis = [];
+    for (var x of list) {
+      lis.push(func(x));
+    }
+    return Promise.all(lis);
+  });
+}
+
+var bg = chrome.runtime.connect(); //browser.extension.getBackgroundPage();
 document.addEventListener("DOMContentLoaded", function() {
-  thistab(function(tb) {
+  thistab(tb => {
     var bts = document.querySelectorAll('.mybtn'),
       cur = tb.url.match(/tour-aus.aws.haylix.net/) ? "green" : "yellow";
     for (x of bts) {
@@ -15,229 +74,159 @@ document.addEventListener("DOMContentLoaded", function() {
         x.style.border = "solid 1px red";
       }
     }
-  })
-})
-
-// Be sure that func returns a Promise.
-function foreach(list, func) {
-  var lis = [];
-  for (var x of list) {
-    lis.push(func(x));
-  }
-  return Promise.all(lis);
-}
+  });
+});
 
 function SHOR(evf) {
-  var e = prompt(
-      "1: (a)lpha, (d)ev, (u)at, (s)taging, (p)rod\n2: (a)uthor, author-(l)b, publisher (1)/(2), dispatcher (o)ne/(t)wo, (e)lb, a(k)amai\n3: (a)us.com, a(s)p, (i)nv, (b)e, (c)orp"
-    ),
-    a = ".tour-aus.aws.haylix.net",
-    s = "http://",
-    t = true,
-    c = false,
-    newtab = evf.ctrlKey;
-  if (e.slice(1, 2) === 'k') {
-    var hre = (function(f) {
-      switch (f) {
-        case "sa":
-          return "http://staging.australia.com/en";
-        case "ss":
-          return "https://unifiedstaging.aussiespecialist.com/en-gb";
-        case "si":
-          return "http://staging.tourisminvestment.tourism.australia.com/en";
-        case "sb":
-          return "http://staging.businessevents.australia.com/en";
-        case "pa":
-          return "http://www.australia.com/en";
-        case "ps":
-          return "https://www.aussiespecialist.com/en";
-        case "pi":
-          return "http://tourisminvestment.com.au/en";
-        case "pb":
-          return "http://businessevents.australia.com/en";
-      }
-    }(e.slice(0, 1) + e.slice(2, 3)));
-    open(hre, newtab)
-  } else {
-    switch (e.slice(0, 1)) {
-      case "a":
-        s += "alpha-";
-        break;
-      case "d":
-        s += "dev-";
-        break;
-      case "u":
-        s += "uat-";
-        break;
-      case "s":
-        s += "stage-";
-        break;
-      case "p":
-        s += "prod-";
-        break;
+  var newtab = evf.ctrlKey;
+  prompt(
+    "1: (a)lpha, (d)ev, (u)at, (s)taging, (p)rod\n" +
+    "2: (a)uthor, author-(l)b, publisher (1)/(2), dispatcher (o)ne/(t)wo, (e)lb, a(k)amai\n" +
+    "3: (a)us.com, a(s)p, (i)nv, (b)e, (c)orp"
+  ).then(letts => {
+    var pieceone = "http://",
+      piecetwo = ".tour-aus.aws.haylix.net",
+      longform = true,
+      authmode = false;
+
+    if (letts.slice(1, 2) === 'k') {
+      var hre = {
+        "sa": "http://staging.australia.com/en",
+        "ss": "https://unifiedstaging.aussiespecialist.com/en-gb",
+        "si": "http://staging.tourisminvestment.tourism.australia.com/en",
+        "sb": "http://staging.businessevents.australia.com/en",
+        "pa": "http://www.australia.com/en",
+        "ps": "https://www.aussiespecialist.com/en",
+        "pi": "http://tourisminvestment.com.au/en",
+        "pb": "http://businessevents.australia.com/en"
+      }[letts.slice(0, 1) + letts.slice(2, 3)];
+      open(hre, newtab).then(window.close);
+    } else {
+      pieceone += {
+        "a": "alpha-",
+        "d": "dev-",
+        "u": "uat-",
+        "s": "stage-",
+        "p": "prod-",
+      }[letts.slice(0, 1)];
+      var sact = {
+        "a": ["aut1", ":4502/siteadmin#/content/", true, longform],
+        "l": ["author", "/siteadmin#/content/", true, longform],
+        "1": ["pub1", ":4503/content/", authmode, longform],
+        "2": ["pub2", ":4503/content/", authmode, longform],
+        "o": ["pdis1-", "/en.html", authmode, false],
+        "t": ["pdis2-", "/en.html", authmode, false],
+        "e": ["pub-elb-", "/en.html", authmode, false]
+      }[letts.slice(1, 2)];
+      pieceone += sact[0], piecetwo += sact[1], [authmode, longform] = sact.slice(2, 4);
+      if (longform) {
+        piecetwo += {
+          "a": "australia/en",
+          "s": "asp/en",
+          "i": "investment/en",
+          "b": "businessevents/en",
+          "c": "corporate/en"
+        }[letts.slice(2, 3)];
+        authmode || (piecetwo += ".html"); // If not in authmode, add the .html
+      } else pieceone += {
+        "a": "aus",
+        "s": "asp",
+        "i": "investment",
+        "b": "be",
+        "c": "corp"
+      }[letts.slice(2, 3)];
+      open(pieceone + piecetwo, newtab).then(window.close);
     }
-    switch (e.slice(1, 2)) {
-      case "a":
-        s += "aut1", a += ":4502/siteadmin#/content/", c = !0;
-        break;
-      case "l":
-        s += "author", a += "/siteadmin#/content/", c = !0;
-        break;
-      case "1":
-        s += "pub1", a += ":4503/content/";
-        break;
-      case "2":
-        s += "pub2", a += ":4503/content/";
-        break;
-      case "o":
-        s += "pdis1-", a += "/en.html", t = !1;
-        break;
-      case "t":
-        s += "pdis2-", a += "/en.html", t = !1;
-        break;
-      case "e":
-        s += "pub-elb-", a += "/en.html", t = !1
-    }
-    if (t) {
-      switch (e.slice(2, 3)) {
-        case "a":
-          a += "australia/en";
-          break;
-        case "s":
-          a += "asp/en";
-          break;
-        case "i":
-          a += "investment/en";
-          break;
-        case "b":
-          a += "businessevents/en";
-          break;
-        case "c":
-          a += "corporate/en"
-      }
-      c || (a += ".html")
-    } else switch (e.slice(2, 3)) {
-      case "a":
-        s += "aus";
-        break;
-      case "s":
-        s += "asp";
-        break;
-      case "i":
-        s += "investment";
-        break;
-      case "b":
-        s += "be";
-        break;
-      case "c":
-        s += "corp"
-    }
-    open(s + a, newtab);
-  }
-  window.close();
+  });
 }
 
 function SWCH(evf) {
-  var newtab = evf.ctrlKey,
-    a = prompt(
-      "(a)uthor, author(l)b, publisher(1), publisher(2), dispatcher(o)ne, dispatcher(t)wo (e)lb");
+  var newtab = evf.ctrlKey;
+  prompt(
+    "(a)uthor, author(l)b, publisher(1), publisher(2), " +
+    "dispatcher(o)ne, dispatcher(t)wo (e)lb").then(lett => {
+    var exten = {
+        "aus": "australia",
+        "be": "businessevents",
+        "corp": "corporate"
+      },
+      retra = {
+        "australia": "aus",
+        "businessevents": "be",
+        "corporate": "corp"
+      };
 
-  function e(e) {
-    switch (e) {
-      case "aus":
-        return "australia";
-      case "be":
-        return "businessevents";
-      case "corp":
-        return "corporate";
-      default:
-        return e
+    if (lett) {
+      thistab(actvtb => {
+        var cref = new URL(actvtb.url),
+          loc, site, page, nurl, base = ".tour-aus.aws.haylix.net";
+        nurl = "http://" + cref.host.match(/^(\w+?-)/)[1];
+        loc = cref.href.match(/\/(\w\w([-_]\w\w)?)(\/|$|\?|\.html)/)[1].replace("-",
+          "_");
+        if (cref.host.match(/pub-elb|pdis\d/)) {
+          site = cref.host.match(/(\pub-elb-|pdis\d-)(\w+?)\./)[2];
+          site = exten[site] || site;
+          page = cref.pathname.match(/\/(.+?)(\.html|$|\?)/)[1].split("/").slice(1).join(
+              "/") +
+            ".html";
+        } else {
+          var l = cref.href.match(/\/content\/(.+?)(\.html|$|\?)/)[1].split("/");
+          site = l[0];
+          page = l.slice(2).join("/") + ".html";
+        }
+        switch (lett.toLowerCase().trim()) {
+          case "a":
+            nurl += "aut1" + base + ":4502/cf#/content/" + [site, loc, page].join("/");
+            break;
+          case "l":
+            nurl += "author" + base + "/cf#/content/" + [site, loc, page].join("/");
+            break;
+          case "1":
+            nurl += "pub1" + base + ":4503/content/" + [site, loc, page].join("/");
+            break;
+          case "2":
+            nurl += "pub2" + base + ":4503/content/" + [site, loc, page].join("/");
+            break;
+          case "o":
+            nurl += "pdis1-" + (retra[site] || site) + base + ["", loc.replace("_",
+              "-"), page].join("/");
+            break;
+          case "t":
+            nurl += "pdis2-" + (retra[site] || site) + base + ["", loc.replace("_",
+              "-"), page].join("/");
+            break;
+          case "e":
+            nurl += "pub-elb-" + (retra[site] || site) + base + ["", loc.replace("_",
+              "-"), page].join("/");
+        }
+        return open(nurl, newtab, actvtb.id);
+      }).then(window.close);
     }
-  }
-
-  function t(e) {
-    switch (e) {
-      case "australia":
-        return "aus";
-      case "businessevents":
-        return "be";
-      case "corporate":
-        return "corp";
-      default:
-        return e
-    }
-  }
-
-  if (a) {
-    thistab(function(actvtb) {
-      var cref = new URL(actvtb.url);
-
-      var c, o, r, n, s, i = ".tour-aus.aws.haylix.net";
-      if (c = "http://" + cref.host.match(/^(\w+?-)/)[1], o = cref.href.match(
-          /\/(\w\w([-_]\w\w)?)(\/|$|\?|\.html)/)[1].replace("-", "_"), cref.host.match(
-          /pub-elb|pdis\d/)) r = cref.host.match(/(\pub-elb-|pdis\d-)(\w+?)\./)[2], r = e(r),
-        n = cref.pathname.match(/\/(.+?)(\.html|$|\?)/)[1].split("/").slice(1).join("/") +
-        ".html";
-      else {
-        var l = cref.href.match(/\/content\/(.+?)(\.html|$|\?)/)[1].split("/");
-        r = l[0], n = l.slice(2).join("/") + ".html"
-      }
-      switch (a.toLowerCase().trim()) {
-        case "a":
-          s = c + "aut1" + i + ":4502/cf#/content/" + [r, o, n].join("/");
-          break;
-        case "l":
-          s = c + "author" + i + "/cf#/content/" + [r, o, n].join("/");
-          break;
-        case "1":
-          s = c + "pub1" + i + ":4503/content/" + [r, o, n].join("/");
-          break;
-        case "2":
-          s = c + "pub2" + i + ":4503/content/" + [r, o, n].join("/");
-          break;
-        case "o":
-          s = c + "pdis1-" + t(r) + i + ["", o.replace("_", "-"), n].join("/");
-          break;
-        case "t":
-          s = c + "pdis2-" + t(r) + i + ["", o.replace("_", "-"), n].join("/");
-          break;
-        case "e":
-          s = c + "pub-elb-" + t(r) + i + ["", o.replace("_", "-"), n].join("/")
-      }
-      open(s, newtab);
-    });
-  }
-  window.close();
+  });
 }
 
 function RPR(evf) {
-  var e = prompt("(a)ustralia, aussie(s)pecialist, (i)nvestment, (b)usinessevents, (c)orporate");
-  if (e) {
-    switch (e) {
-      case "a":
-        e = "australia";
-        break;
-      case "s":
-        e = "asp";
-        break;
-      case "i":
-        e = "investment";
-        break;
-      case "b":
-        e = "businessevents";
-        break;
-      case "c":
-        e = "corporate"
-    }
-    thistab(function(tablis) {
-      bg.addRPRtab(tablis.id, e);
-    })
-  } else {
-    thistab(function(tablis) {
-      bg.remRPRtab(tablis.id);
-    })
-  }
-  window.close();
+  thistab().then()
+  prompt("(a)ustralia, aussie(s)pecialist, (i)nvestment, (b)usinessevents, (c)orporate").then(
+    lett => {
+      if (lett) {
+        lett = {
+          "a": "australia",
+          "s": "asp",
+          "i": "investment",
+          "b": "businessevents",
+          "c": "corporate"
+        }[lett]
+        thistab(function(tablis) {
+          bg.addRPRtab(tablis.id, e);
+        })
+      } else {
+        thistab(function(tablis) {
+          bg.remRPRtab(tablis.id);
+        })
+      }
+      window.close();
+    });
 }
 
 function REG() {
@@ -349,7 +338,8 @@ function DLR(evf) {
           "document.getElementById(\"DLRscrtag\").remove();function" +
           " oncl(){void 0==window.dataLayer_Event?div.innerText=\"No dataLayer_Event defined.\":" +
           "div.innerText=JSON.stringify(dataLayer_Event,0,1)}var div=document.createElement(\"pre\");" +
-          "oncl(),div.id=\"DLRtag\",div.style.cssText=\"position:fixed;left:25%;top:" + low +
+          "oncl(),div.id=\"DLRtag\",div.style.cssText=\"position:fixed;left:25%;top:" +
+          low +
           ";width:50%;overflow:hidden;z-index:999999;padding:0.5em;background:#adf;border:2px solid blue;" +
           "border-radius:4px;\",document.documentElement.appendChild(div),div.onclick=function(e)" +
           "{e.stopPropagation()};document.addEventListener(\"click\",oncl)'," +

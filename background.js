@@ -1,32 +1,27 @@
-// General helper functions.
-function open(url, newtab, index) {
-  if (index == undefined) {
-    thistab(function(tb) {
-      newtab ? chrome.tabs.create({
-        'url': url,
-        'index': tb.index + 1
-      }) : chrome.tabs.update({
-        'url': url
-      })
-    })
-  } else {
-    newtab ? chrome.tabs.create({
-      'url': url,
-      'index': index
-    }) : chrome.tabs.update({
-      'url': url
-    })
+//Port System: Firefox can't handle incognito extensions.
+var port;
+chrome.runtime.onConnect.addListener(p => {
+  if (port) { //Juust in case you have two connections.        Delete the old one??
+    port.onConnect.removeListener(handl);
+    port = null;
   }
-}
+  port = p;
 
-function thistab(func) {
-  chrome.tabs.query({
-    active: true,
-    currentWindow: true
-  }, function(tabr) {
-    func(tabr[0])
-  });
-}
+  function handl(m) {
+    try {
+      port.sendMessage({
+        "result": window[m.method](...m.arguments)
+      });
+    }
+  }
+
+  port.onMessage.addListener(handl);
+  port.onDisconnect.addListener(m => {
+    port.onConnect.removeListener(handl);
+    port = null;
+  })
+})
+
 
 // Some helper functions for the RPR button.
 fixingtabs = {};
@@ -41,12 +36,11 @@ chrome.tabs.onUpdated.addListener(function(id, s, inf) {
   }
 });
 
-function addRPRtab(tabid, site) {
-  fixingtabs[tabid] = site;
-}
-
-function remRPRtab(tabid) {
-  delete fixingtabs[tabid];
+function toggleRPRtab(tabid, site) {
+  if (fixingtabs[tabid] === site)
+    delete fixingtabs[tabid];
+  else
+    fixingtabs[tabid] = site;
 }
 
 //Helper functions for the DLR button.
@@ -60,6 +54,8 @@ chrome.webRequest.onBeforeRequest.addListener(function(detl) {
 }, {
   urls: []
 }, ["blocking"]);
+
+function
 
 function addDLRTab(tabid) {
   haltingtabs[tabid] = true;
