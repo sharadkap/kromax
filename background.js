@@ -14,7 +14,7 @@ chrome.webRequest.onBeforeRequest.addListener(detl => {
     };
   }
 }, {
-  urls: [],
+  urls: ["<all_urls>"],
   types: ['main_frame']
 }, ['blocking'])
 
@@ -31,7 +31,7 @@ chrome.webRequest.onBeforeRequest.addListener(detl => {
     };
   }
 }, {
-  urls: [],
+  urls: ["<all_urls>"],
   types: ['main_frame']
 }, ["blocking"]);
 //Returns True if the tab was successfully added, returns False if it was deleted.

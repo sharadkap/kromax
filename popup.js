@@ -325,7 +325,6 @@ function DLR(evf) {
     'method': 'toggleDLRTab',
     'arguments': [tb.id]
   }).then(isdlr => {
-    console.log(isdlr);
     if (isdlr.result) {
       return eval(xss('DLR',
         'function oncl(){void 0==window.dataLayer_Event?div.innerText="No dataLayer_Event defined.":' +
