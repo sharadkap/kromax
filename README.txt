@@ -19,3 +19,6 @@ Optional Steps:
 Tick the Allow In Incognito box to use it in incognito mode.
 
 (In Chrome) At the bottom of the page, click Keyboard Shortcuts, and add a shortcut to open the popup.
+
+
+Note: In Firefox, you will have to reinstall the plugin every time you start a new browsing session.
