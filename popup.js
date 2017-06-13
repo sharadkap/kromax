@@ -1,23 +1,25 @@
 // General helper functions.
-function open(url, newtab, index) {
+function open(url, newtab, index, silent) {
   if (index === undefined) { // I sure hope you know what you're doing.
     return thistab(tb => {
       return new Promise((resolve, reject) => {
         newtab ? chrome.tabs.create({
-          'url': url,
-          'index': tb.index + 1
+          url: url,
+          index: tb.index + 1,
+          active: !silent //Gah
         }, resolve) : chrome.tabs.update(tb.id, { // Terrible idea, surely.
-          'url': url,
+          url: url,
         }, resolve);
       });
     });
   } else {
     return new Promise((resolve, reject) => {
       newtab ? chrome.tabs.create({
-        'url': url,
-        'index': index
+        url: url,
+        index: index,
+        active: !silent
       }, resolve) : chrome.tabs.update(index, {
-        'url': url
+        url: url
       }, resolve);
     });
   }
@@ -270,7 +272,7 @@ function MOS() {
     var lis = [];
     for (var x of resura[0]) {
       var ind = Math.round(tab.index + 1);
-      lis.push(open(x, true, ind));
+      lis.push(open(x, true, ind, true));
     }
     return Promise.all(lis);
   })).then(window.close);
@@ -287,7 +289,8 @@ function DUP() {
     for (c of locs) {
       ind = Math.round(ind + 1);
       ur.match("/content/") && (c = c.replace("-", "_"));
-      lis.push(open(ur.replace(/\/\w\w([-_]\w\w)?(\/|.html|$)/, "/" + c + "$2"), true, ind));
+      lis.push(open(ur.replace(/\/\w\w([-_]\w\w)?(\/|.html|$)/, "/" + c + "$2"), true, ind,
+        true));
     };
     return Promise.all(lis);
   }).then(window.close);
