@@ -373,7 +373,7 @@ function MUDA() {
     "\"_sto_vic\",\"_sto_nsw\"],f=location.href.match(/\\/(\\w\\w([-_]\\w\\w)?)" +
     "(\\/|(\\.html)|$)/)[1],e=f.split(/[-_]/);e=((e[0]==\"es\"&&e[1]==\"cl\")||" +
     "(e[0]==\"pt\"&&e[1]==\"br\"))?e:e.reverse();e=e.join(\"_\")" +
-    ".replace(\"gb\",\"uk\");for(m in o)if(o.hasOwnProperty(m))" +
+    ".replace(\"gb\",\"uk\");o=o.concat(o);for(m in o)if(o.hasOwnProperty(m))" +
     "$.ajax({url:\"/bin/asp/trainingModule\",type:\"POST\",cache:!1,dataType:\"json\"," +
     "data:{isComplete:true,moduleId:e+o[m],locale:f}});"), tab.id)).then(window.close);
 }
