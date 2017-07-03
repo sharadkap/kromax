@@ -362,10 +362,13 @@ function TRK() {
 }
 
 function MOD() {
-  thistab(tab => eval(xss("MOD", "function modgo(n){MODwin.cpCmndGotoSlide=n-1}var MODwin=" +
-    scormwin + "switch(MODwin.location.href.match(/(\\w\\w_){2}\\w+?_\\w+?" +
-    "(?=_|\\/|\\.)/)[0].split(\"_\")[3]){case \"mod3\":modgo(MODwin.cpInfoSlideCount - 6);" +
-    "break;default:modgo(MODwin.cpInfoSlideCount - 4)};"), tab.id)).then(window.close);
+  thistab(tab => eval(xss("MOD", "function modgo(n){MODwin.cpCmndGotoSlide=MODwin." +
+    "cpInfoSlideCount-n}var MODwin=" + scormwin + "var props = JSON.parse($(\"script[data-" +
+    "scf-json='true']:not([id*='social'])\").text()).properties;MODwin.updateModuleStatus(" +
+    "MODwin.setStatusURL, undefined, props.id, 0, false, 0, MODwin.getModuleID(), props[" +
+    "'enablement-resource-name']);switch(props.id.split(\"_\")[3]){case \"mod3\":modgo(6);break;" +
+    "default:modgo(4)};MODwin.SCORM2004_objAPI.Activity.ActivityObjectives[0]" +
+    ".SatisfiedByMeasure = true;"), tab.id)).then(window.close);
 }
 
 function MUDA() {
