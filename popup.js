@@ -363,12 +363,12 @@ function TRK() {
 
 function MOD() {
   thistab(tab => eval(xss("MOD", "function modgo(n){MODwin.cpCmndGotoSlide=MODwin." +
-    "cpInfoSlideCount-n}var MODwin=" + scormwin + "var props = JSON.parse($(\"script[data-" +
-    "scf-json='true']:not([id*='social'])\").text()).properties;MODwin.updateModuleStatus(" +
-    "MODwin.setStatusURL, undefined, props.id, 0, false, 0, MODwin.getModuleID(), props[" +
-    "'enablement-resource-name']);switch(props.id.split(\"_\")[3]){case \"mod3\":modgo(6);break;" +
-    "default:modgo(4)};MODwin.SCORM2004_objAPI.Activity.ActivityObjectives[0]" +
-    ".SatisfiedByMeasure = true;"), tab.id)).then(window.close);
+      "cpInfoSlideCount-n}var MODwin=" + scormwin + "var props = JSON.parse($(\"script[data-" +
+      "scf-json='true']:not([id*='social'])\").text()).properties;MODwin.updateModuleStatus(" +
+      "MODwin.setStatusURL, undefined, props.id, 0, false, 0, MODwin.getModuleID(), props[" +
+      "'enablement-resource-name']);switch(props.id.split(\"_\")[3]){case \"mod3\":modgo(6);break;" +
+      "default:modgo(4)};MODwin.SCORM2004_objAPI.RunTimeData.CompletionStatus = 'completed';"),
+    tab.id)).then(window.close);
 }
 
 function MUDA() {
