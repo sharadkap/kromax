@@ -361,14 +361,28 @@ function TRK() {
     'cpInfoSlideCount;window.setTimeout(TRKloop,1e3)}();'), tab.id)).then(window.close);
 }
 
-function MOD() {
-  thistab(tab => eval(xss("MOD", "function modgo(n){MODwin.cpCmndGotoSlide=MODwin." +
+function MOD(evf) {
+  if (evf.ctrlKey) {
+    thistab(tab => eval(xss("MOD", "function modgo(m,n){m.cpCmndGotoSlide=m.cpInfoSlideCount-n}" +
+      "var props = JSON.parse($(\"script[data-scf-json='true']:not([id*='social'])\").text()).properties;" +
+      "document.getElementById('scf-asset-element').onload = " +
+      "function(){this.contentDocument.getElementById('ScormContent').onload = " +
+      "function(){var mo=new MutationObserver(ev=>{for(var e of ev){for(var x of e.addedNodes){" +
+      "if(x.id&&x.id.startsWith('Text_Caption_')){mo.disconnect();var m=x.ownerDocument.defaultView;" +
+      "m.updateModuleStatus(m.setStatusURL, undefined, props.id, 0, false, 0, m.getModuleID(), props[" +
+      "'enablement-resource-name']);switch(props.id.split(\"_\")[3]){case \"mod3\":modgo(m,6);break;" +
+      "default:modgo(m,4);}m.SCORM2004_objAPI.RunTimeData.CompletionStatus = 'completed';return;}}}});" +
+      "mo.observe(this.contentDocument,{childList:true,subtree:true});};};" +
+      "document.getElementsByClassName('scf-play-button')[0].click();")))
+  } else {
+    thistab(tab => eval(xss("MOD", "function modgo(n){MODwin.cpCmndGotoSlide=MODwin." +
       "cpInfoSlideCount-n}var MODwin=" + scormwin + "var props = JSON.parse($(\"script[data-" +
       "scf-json='true']:not([id*='social'])\").text()).properties;MODwin.updateModuleStatus(" +
       "MODwin.setStatusURL, undefined, props.id, 0, false, 0, MODwin.getModuleID(), props[" +
       "'enablement-resource-name']);switch(props.id.split(\"_\")[3]){case \"mod3\":modgo(6);break;" +
-      "default:modgo(4)};MODwin.SCORM2004_objAPI.RunTimeData.CompletionStatus = 'completed';"),
-    tab.id)).then(window.close);
+      "default:modgo(4)};MODwin.SCORM2004_objAPI.RunTimeData.CompletionStatus = 'completed';"
+    ), tab.id)).then(window.close);
+  }
 }
 
 function MUDA() {
