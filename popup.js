@@ -43,15 +43,26 @@ function eval(code, id, file) {
     });
   }
 }
-var esc = JSON.stringify;
-var dlcss = ["\"position:fixed;left:25%;top:",
-  ";width:50%;overflow:hidden;z-index:999999;padding:0.5em;" +
-  "background:#adf;border:2px solid blue;border-radius:4px;\""
-];
-var scormwin =
-  "function(){var n=$(\"iframe[src^=\\\"/content/\\\"]\")[0],o=$(\"#ScormContent\")[0];" +
+var esc = JSON.stringify,
+  dlcss = ["\"position:fixed;left:25%;top:",
+    ";width:50%;overflow:hidden;z-index:999999;padding:0.5em;" +
+    "background:#adf;border:2px solid blue;border-radius:4px;\""
+  ],
+  scormwin = "function(){var n=$(\"iframe[src^=\\\"/content/\\\"]\")[0],o=$(\"#ScormContent\")[0];" +
   "return void 0!==o?o.contentWindow:void 0!==n?(o=n.contentWindow.$(\"#ScormContent\")" +
-  "[0],void 0!==o?o.contentWindow:n.contentWindow): window}();";
+  "[0],void 0!==o?o.contentWindow:n.contentWindow): window}();",
+  akamairl = {
+    "sa": "http://staging.australia.com/en",
+    "ss": "https://unifiedstaging.aussiespecialist.com/en",
+    "si": "http://staging.tourisminvestment.tourism.australia.com/en",
+    "sb": "http://staging.businessevents.australia.com/en",
+    "sc": "http://staging.tourism.australia.com/en",
+    "pa": "http://www.australia.com/en",
+    "ps": "https://www.aussiespecialist.com/en",
+    "pi": "http://tourisminvestment.com.au/en",
+    "pb": "http://businessevents.australia.com/en",
+    "pc": "http://tourism.australia.com/en"
+  };
 
 function xss(name, code) {
   return "var scr=document.createElement(\"script\");scr.id=\"" + name + "scrtag\";" +
@@ -124,17 +135,7 @@ function SHOR(evf) {
       longform = true,
       authmode = false;
     if (letts.slice(1, 2) === 'k') {
-      var hre = {
-        "sa": "http://staging.australia.com/en",
-        "ss": "https://unifiedstaging.aussiespecialist.com/en-gb",
-        "si": "http://staging.tourisminvestment.tourism.australia.com/en",
-        "sb": "http://staging.businessevents.australia.com/en",
-        "pa": "http://www.australia.com/en",
-        "ps": "https://www.aussiespecialist.com/en",
-        "pi": "http://tourisminvestment.com.au/en",
-        "pb": "http://businessevents.australia.com/en",
-        "pc": "http://prod.tourism.australia.com/en"
-      }[letts.slice(0, 1) + letts.slice(2, 3)];
+      var hre = akamairl[letts.slice(0, 1) + letts.slice(2, 3)];
       return open(hre, newtab);
     } else {
       pieceone += {
@@ -178,7 +179,7 @@ function SHOR(evf) {
 function SWCH(evf) {
   var newtab = evf.ctrlKey;
   prompt("(a)uthor, author(l)b, publisher(1), publisher(2), " +
-    "dispatcher(o)ne, dispatcher(t)wo (e)lb").then(lett => {
+    "dispatcher(o)ne, dispatcher(t)wo, (e)lb, a(k)amai").then(lett => {
     var exten = {
         "aus": "australia",
         "be": "businessevents",
@@ -193,17 +194,35 @@ function SWCH(evf) {
       return thistab(actvtb => {
         var cref = new URL(actvtb.url),
           loc, site, page, nurl, base = ".tour-aus.aws.haylix.net";
-        nurl = "http://" + cref.host.match(/^(\w+?-)/)[1];
         loc = cref.href.match(/\/(\w\w([-_]\w\w)?)(\/|$|\?|\.html)/)[1].replace("-", "_");
-        if (cref.host.match(/pub-elb|pdis\d/)) {
-          site = cref.host.match(/(\pub-elb-|pdis\d-)(\w+?)\./)[2];
-          site = exten[site] || site;
+        if (cref.host.match(base)) { // If it's a Haylix-style page
+          nurl = "http://" + cref.host.match(/^(\w+?-)/)[1];
+          if (cref.host.match(/pub-elb|pdis\d/)) {
+            site = cref.host.match(/(\pub-elb-|pdis\d-)(\w+?)\./)[2];
+            site = exten[site] || site;
+            page = cref.pathname.match(/\/(.+?)(\.html|$|\?)/)[1].split("/").slice(1).join(
+              "/") + ".html";
+          } else {
+            var l = cref.href.match(/\/content\/(.+?)(\.html|$|\?)/)[1].split("/");
+            site = l[0];
+            page = l.slice(2).join("/") + ".html";
+          }
+        } else { // If it's an Akamai site, do a lookup, there's not so much of a pattern.
+          [nurl, site] = {
+            "www.australia.com": ["prod", "australia"],
+            "www.aussiespecialist.com": ["prod", "asp"],
+            "www.tourisminvestment.com.au": ["prod", "investment"],
+            "businessevents.australia.com": ["prod", "businessevents"],
+            "www.tourism.australia.com": ["prod", "corporate"],
+            "staging.australia.com": ["stage", "australia"],
+            "unifiedstaging.aussiespecialist.com": ["stage", "asp"],
+            "staging.tourisminvestment.tourism.australia.com": ["stage", "investment"],
+            "staging.businessevents.australia.com": ["stage", "businessevents"],
+            "staging.tourism.australia.com": ["stage", "corporate"]
+          }[cref.host]
+          nurl = "http://" + nurl + "-";
           page = cref.pathname.match(/\/(.+?)(\.html|$|\?)/)[1].split("/").slice(1).join(
             "/") + ".html";
-        } else {
-          var l = cref.href.match(/\/content\/(.+?)(\.html|$|\?)/)[1].split("/");
-          site = l[0];
-          page = l.slice(2).join("/") + ".html";
         }
         switch (lett.toLowerCase().trim()) {
         case "a":
@@ -232,6 +251,12 @@ function SWCH(evf) {
           nurl += "pub-elb-" + (retra[site] || site) + base + ["", loc.replace("_", "-"),
             page
           ].join("/");
+          break;
+        case "k": // Akaimai sites a bit different, mostly hardcoded.
+          site = site == "asp" ? "s" : site;
+          nurl = nurl.match("prod") ? "p" : nurl.match("stage") ? "s" : nurl;
+          nurl = akamairl[nurl + site.slice(0, 1)].slice(0, -3) + "/" + loc.replace("_",
+            "-") + "/" + page;
         }
         return open(nurl, newtab, actvtb.id);
       });
