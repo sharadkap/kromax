@@ -257,7 +257,7 @@ function REG1() {
 
 function LOG() {
   prompt("Enter a Username (Comma/space separated password optional)").then(usn => {
-    usn = usn.split(/[, ]/);
+    usn = usn.split(/\s\/\s|,\s|\s|,|\//);
     usn[1] = usn[1] || "Welcome1";
     return eval("document.getElementById('j_username').value=" + esc(usn[0]) +
       "; document.getElementsByName('j_password')[0].value=" + esc(usn[1]) +
