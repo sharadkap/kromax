@@ -109,7 +109,7 @@ function thistab(func) {
 function msgback(msg) {
   return new Promise(resolve => chrome.runtime.sendMessage(msg, resolve));
 }
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
   thistab(tb => {
     var bts = document.querySelectorAll('.mybtn'),
       cur = tb.url.match(/tour-aus.aws.haylix.net/) ? "green" : "yellow";
@@ -290,14 +290,19 @@ function LOG() {
   }).then(window.close);
 }
 
-function MOS() {
+function MOS(evf) {
+  var filt = evf.ctrlKey;
+  var los = [];
   thistab(tab => eval("var z=[];for(x of document.querySelectorAll(" +
     "\".mosaic .line-through-container-biline > a.type-anchor-title:not([href=\\\"#\\\"])" +
     ",.sitemap a:not([href=\\\"#\\\"])\")){z.push(x.href);}z;", tab.id).then(resura => {
     var lis = [];
     for (var x of resura[0]) {
-      var ind = Math.round(tab.index + 1);
-      lis.push(open(x, true, ind, true));
+      if (!(filt && los.includes(x))) {
+        var ind = Math.round(tab.index + 1);
+        lis.push(open(x, true, ind, true));
+        los.push(x);
+      }
     }
     return Promise.all(lis);
   })).then(window.close);
