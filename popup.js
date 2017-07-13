@@ -265,10 +265,26 @@ function SWCH(evf) {
 }
 
 function RPR(evf) {
-  thistab(tab => msgback({
-    'method': 'toggleRPRtab',
-    'arguments': [tab.id, new URL(tab.url).pathname.match(/^\/content\/(\w+?)\//)[1]]
-  })).then(window.close);
+  if (evf.ctrlKey) {
+    prompt("(a)us.com, a(s)p, (i)nv, (b)e, (c)orp").then(lett => {
+      var sit = {
+        "a": "australia",
+        "s": "asp",
+        "i": "investment",
+        "b": "businessevents",
+        "c": "corporate"
+      }[lett];
+      return thistab(tab => msgback({
+        'method': 'toggleRPRtab',
+        'arguments': [tab.id, sit]
+      }))
+    }).then(window.close);
+  } else {
+    thistab(tab => msgback({
+      'method': 'toggleRPRtab',
+      'arguments': [tab.id, new URL(tab.url).pathname.match(/^\/content\/(\w+?)\//)[1]]
+    })).then(window.close);
+  }
 }
 
 function REG() {
