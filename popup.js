@@ -293,7 +293,10 @@ function LOG() {
 function MOS(evf) {
   var filt = evf.ctrlKey;
   var los = [];
-  thistab(tab => eval("var z=[];for(x of document.querySelectorAll(" +
+  thistab(tab => {
+    debugger;
+    los.push(new URL(tab.url).href)
+  }).then(() => thistab(tab => eval("var z=[];for(x of document.querySelectorAll(" +
     "\".mosaic .line-through-container-biline > a.type-anchor-title:not([href=\\\"#\\\"])" +
     ",.sitemap a:not([href=\\\"#\\\"])\")){z.push(x.href);}z;", tab.id).then(resura => {
     var lis = [];
@@ -305,7 +308,7 @@ function MOS(evf) {
       }
     }
     return Promise.all(lis);
-  })).then(window.close);
+  }))).then(window.close);
 }
 
 function DUP() {
