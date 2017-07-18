@@ -13,7 +13,7 @@
     "persistent": true
   },
   "permissions": ["tabs", "webRequest", "webRequestBlocking", "*://*.tourisminvestment.com.au/*",
-    "*://*.tour-aus.aws.haylix.net/*", "*://*.aussiespecialist.com/*",
+    "*://*.tour-aus.aws.haylix.net/*", "*://*.aussiespecialist.com/*", "*://localhost/*",
     "*://*.aussiespecialist.cn/*", "*://*.australia.com/*", "*://*.australia.cn/*"
   ]
 }
