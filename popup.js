@@ -287,13 +287,30 @@ function RPR(evf) {
   }
 }
 
-function REG() {
-  eval("md5.js", undefined, true).then(() => eval(xss("REG",
-    "document.getElementById(\"register-submit\").click();"))).then(window.close);
+function DL(evf) {
+  var low = evf.ctrlKey ? "500px" : "0px";
+  thistab(tb => msgback({
+    'method': 'toggleDLRTab',
+    'arguments': [tb.id]
+  }).then(isdlr => {
+    if (isdlr.result) {
+      return eval(xss('DLR',
+        'function oncl(){void 0==window.dataLayer_Event?div.innerText="No dataLayer_Event defined.":' +
+        'div.innerText=JSON.stringify(dataLayer_Event,0,1)}var div=document.createElement("pre");' +
+        'oncl(),div.id="DLRtag",div.style.cssText=' + dlcss.join(low) +
+        ',document.documentElement.appendChild(div),div.onclick=function(e){e.stopPropagation()};' +
+        'document.addEventListener("click",oncl)'), tb.id);
+    } else {
+      return eval(xss('DLR', "document.removeEventListener(\"click\", oncl);" +
+        "document.getElementById(\"DLRtag\").remove();"), tb.id);
+    }
+  })).then(window.close);
 }
 
-function REG1() {
-  eval("md5.js", undefined, true).then(window.close);
+function REG(evf) {
+  var nosub = evf.ctrlKey; //If it crashes, that's fine, the execution environment is being deleted anyway
+  eval("md5.js", undefined, true).then(nosub ? window.close : () => eval(xss("REG",
+    "document.getElementById(\"register-submit\").click();"))).then(window.close);
 }
 
 function LOG() {
@@ -310,7 +327,6 @@ function MOS(evf) {
   var filt = evf.ctrlKey;
   var los = [];
   thistab(tab => {
-    debugger;
     los.push(new URL(tab.url).href)
   }).then(() => thistab(tab => eval("var z=[];for(x of document.querySelectorAll(" +
     "\".mosaic .line-through-container-biline > a.type-anchor-title:not([href=\\\"#\\\"])" +
@@ -345,47 +361,35 @@ function DUP() {
   }).then(window.close);
 }
 
-function DEC() {
-  thistab(ta => open(ta.url + "?" + Math.random(), false, ta.id)).then(window.close);
+function DEC(evf) {
+  var buncha = evf.ctrlKey;
+  if (!buncha) {
+    thistab(ta => open(ta.url + "?" + Math.random(), false, ta.id)).then(window.close);
+  } else {
+    thistab(tab => eval(
+      "for(i of document.querySelectorAll(\"[src]\")){i.src += \"?\" + Math.random();}for(i of " +
+      "document.querySelectorAll(\"[style*='url']\")){i.style.cssText=i.style.cssText.replace(" +
+      "/url\\(\"(.*?)\"\\)/,\"url(\\\"$1?\"+Math.random()+\"\\\")\")}")).then(window.close);
+  }
 }
 
-function IDEC() {
-  thistab(tab => eval(
-    "for(i of document.querySelectorAll(\"[src]\")){i.src += \"?\" + Math.random();}" +
-    "for(i of document.querySelectorAll(\"[style*='url']\")){" +
-    "  i.style.cssText=i.style.cssText.replace(/url\\(\"(.*?)\"\\)/,\"url(\\\"$1?\"+Math.random()+\"\\\")\")}"
-  )).then(window.close);
-}
-
-function DL(evf) {
-  var low = evf.ctrlKey ? "500px" : "0px";
-  eval(xss('DL',
-    'var thetext;if(window.dataLayer_Event==undefined){thetext="No dataLayer_Event defined."}' +
-    'else{thetext=JSON.stringify(dataLayer_Event,0,1)};var div=document.createElement("pre");' +
-    'div.innerText=thetext;div.style.cssText=' + dlcss.join(low) +
-    ';document.documentElement.appendChild(div);div.onclick=function(e)' +
-    '  {e.stopPropagation()};document.addEventListener("click",function(){div.remove();},{once:true});'
-  )).then(window.close);
-}
-
-function DLR(evf) {
-  var low = evf.ctrlKey ? "500px" : "0px";
-  thistab(tb => msgback({
-    'method': 'toggleDLRTab',
-    'arguments': [tb.id]
-  }).then(isdlr => {
-    if (isdlr.result) {
-      return eval(xss('DLR',
-        'function oncl(){void 0==window.dataLayer_Event?div.innerText="No dataLayer_Event defined.":' +
-        'div.innerText=JSON.stringify(dataLayer_Event,0,1)}var div=document.createElement("pre");' +
-        'oncl(),div.id="DLRtag",div.style.cssText=' + dlcss.join(low) +
-        ',document.documentElement.appendChild(div),div.onclick=function(e){e.stopPropagation()};' +
-        'document.addEventListener("click",oncl)'), tb.id);
-    } else {
-      return eval(xss('DLR', "document.removeEventListener(\"click\", oncl);" +
-        "document.getElementById(\"DLRtag\").remove();"), tb.id);
-    }
-  })).then(window.close);
+function ING(evf) {
+  var nosub = evf.ctrlKey;
+  thistab(ta => eval(xss("ING", "function set_text(sec,text){$(sec).find(\"input[type='text']\")." +
+    "val(text).change()}function pick_tag(sec,tag){$(sec).find(\".coral-TagList\").data(\"tagList\")." +
+    "addItem({display:tag,value:tag});}var felds=document.getElementsByClassName(\"foundation-" +
+    "field-editable\");pick_tag(felds[3],\"properties:object-type/photograph/digital\");felds[5]" +
+    ".getElementsByTagName(\"coral-select\")[0].items.getAll()[1].selected=true;set_text(felds[fe" +
+    "lds.length-31],\"TEST: \"+$(\"coral-card-content\").text().trim().split(\".\")[0]);set_text(" +
+    "felds[felds.length-29],$(felds[felds.length-17]).find(\"input\").val());pick_tag(felds[felds" +
+    ".length-27],\"properties:language/unknown\");pick_tag(felds[felds.length-26],\"ta-project:" +
+    "campaign\");pick_tag(felds[felds.length-25],\"ta-location:unknown\");pick_tag(felds[" +
+    "felds.length-22],\"ta-experience:other\");$(felds[felds.length-19]).find(\"coral-datepicker" +
+    "\").val(new Date()).change();set_text(felds[felds.length-14],\"N/A\");" +
+    "set_text(felds[felds.length-13],\"N/A\");set_text(felds[felds.length-12],\"N/A\");" +
+    "pick_tag(felds[felds.length-11],\"properties:rights-level/user\");$(felds[felds.length-4])." +
+    "find(\"coral-select\")[0].items.getAll()[1].selected=true;" + (nosub ? "" : // Don't click Save if not saving.
+      "$(\"#shell-propertiespage-saveactivator\").click()")))).then(window.close);
 }
 
 function GTO() {
