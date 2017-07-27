@@ -53,7 +53,7 @@ var esc = JSON.stringify,
   "[0],void 0!==o?o.contentWindow:n.contentWindow): window}();",
   akamairl = {
     "sa": "http://staging.australia.com/en",
-    "ss": "https://unifiedstaging.aussiespecialist.com/en",
+    "ss": "https://staging.aussiespecialist.com/en",
     "si": "http://staging.tourisminvestment.tourism.australia.com/en",
     "sb": "http://staging.businessevents.australia.com/en",
     "sc": "http://staging.tourism.australia.com/en",
@@ -215,7 +215,7 @@ function SWCH(evf) {
             "businessevents.australia.com": ["prod", "businessevents"],
             "www.tourism.australia.com": ["prod", "corporate"],
             "staging.australia.com": ["stage", "australia"],
-            "unifiedstaging.aussiespecialist.com": ["stage", "asp"],
+            "staging.aussiespecialist.com": ["stage", "asp"],
             "staging.tourisminvestment.tourism.australia.com": ["stage", "investment"],
             "staging.businessevents.australia.com": ["stage", "businessevents"],
             "staging.tourism.australia.com": ["stage", "corporate"]
