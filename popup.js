@@ -317,7 +317,8 @@ function LOG() {
   prompt("Enter a Username (Comma/space separated password optional)").then(usn => {
     usn = usn.split(/\s\/\s|,\s|\s|,|\//);
     usn[1] = usn[1] || "Welcome1";
-    return eval("document.getElementById('j_username').value=" + esc(usn[0]) +
+    return eval("var l=document.querySelectorAll('a[href=\"#fancybox-login-form\"]')[0];" +
+      "if(l){l.click();}document.getElementById('j_username').value=" + esc(usn[0]) +
       "; document.getElementsByName('j_password')[0].value=" + esc(usn[1]) +
       "; document.getElementById('usersignin').click();");
   }).then(window.close);
