@@ -315,7 +315,7 @@ function REG(evf) {
 
 function LOG() {
   prompt("Enter a Username (Comma/space separated password optional)").then(usn => {
-    usn = usn.split(/\s\w+:\t|\s\/\s|,\s|\s|,|\//);
+    usn = usn.split(/\s.+?[：:]\t|\s\/\s|,\s|\s|,|\//);
     usn[1] = usn[1] || "Welcome1";
     return eval("var l=document.querySelectorAll('a[href=\"#fancybox-login-form\"]')[0];" +
       "if(l){l.click();}document.getElementById('j_username').value=" + esc(usn[0]) +
