@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Shortcuts",
   "description": "Like Shortcut Bookmarks, but with image icons instead of text. Also multi-tab-usage.",
-  "version": "0.40",
+  "version": "0.41",
   "browser_action": {
     "default_icon": "img/icon.png",
     "default_popup": "popup.html",

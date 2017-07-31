@@ -439,9 +439,10 @@ function MOD(evf) {
   }
 }
 
-function MUDA() {
-  thistab(tab => eval(xss("MUDA", "var o=[\"_core_mod1\",\"_core_mod2\",\"_core_mod3\"," +
-    "\"_sto_vic\",\"_sto_nsw\"],f=location.href.match(/\\/(\\w\\w([-_]\\w\\w)?)" +
+function MUDA(evf) {
+  var half = evf.ctrlKey;
+  thistab(tab => eval(xss("MUDA", "var o=[\"_core_mod1\",\"_core_mod2\",\"_core_mod3\"," + (half ?
+      "" : "\"_sto_vic\",\"_sto_nsw\"") + "],f=location.href.match(/\\/(\\w\\w([-_]\\w\\w)?)" +
     "(\\/|(\\.html)|$)/)[1],e=f.split(/[-_]/);e=((e[0]==\"es\"&&e[1]==\"cl\")||" +
     "(e[0]==\"pt\"&&e[1]==\"br\"))?e:e.reverse();e=e.join(\"_\")" +
     ".replace(\"gb\",\"uk\");o=o.concat(o);for(m in o)if(o.hasOwnProperty(m))" +
