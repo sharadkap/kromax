@@ -427,7 +427,7 @@ function MOD(evf) {
       "'enablement-resource-name']);switch(props.id.split(\"_\")[3]){case \"mod3\":modgo(m,6);break;" +
       "default:modgo(m,4);}m.SCORM2004_objAPI.RunTimeData.CompletionStatus = 'completed';return;}}}});" +
       "mo.observe(this.contentDocument,{childList:true,subtree:true});};};" +
-      "document.getElementsByClassName('scf-play-button')[0].click();")))
+      "document.getElementsByClassName('scf-play-button')[0].click();"))).then(window.close);
   } else {
     thistab(tab => eval(xss("MOD", "function modgo(n){MODwin.cpCmndGotoSlide=MODwin." +
       "cpInfoSlideCount-n}var MODwin=" + scormwin + "var props = JSON.parse($(\"script[data-" +
