@@ -59,9 +59,9 @@ var esc = JSON.stringify,
     "sc": "http://staging.tourism.australia.com/en",
     "pa": "http://www.australia.com/en",
     "ps": "https://www.aussiespecialist.com/en",
-    "pi": "http://tourisminvestment.com.au/en",
+    "pi": "http://www.tourisminvestment.com.au/en",
     "pb": "http://businessevents.australia.com/en",
-    "pc": "http://tourism.australia.com/en"
+    "pc": "http://www.tourism.australia.com/en"
   };
 
 function xss(name, code) {
@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function SHOR(evf) {
   var newtab = evf.ctrlKey;
   prompt("1: (a)lpha, (d)ev, (u)at, (s)taging, (p)rod\n" +
-    "2: (a)uthor, author-(l)b, publisher (1)/(2), dispatcher (o)ne/(t)wo, (e)lb, a(k)amai\n" +
+    "2: (a)uthor, author-(l)b, publisher (1)/(2), dispatcher (o)ne/(t)wo, (e)lb, a(k)amai, (c)rxde\n" +
     "3: (a)us.com, a(s)p, (i)nv, (b)e, (c)orp").then(letts => {
     var pieceone = "http://",
       piecetwo = ".tour-aus.aws.haylix.net",
@@ -152,7 +152,8 @@ function SHOR(evf) {
         "2": ["pub2", ":4503/content/", authmode, longform],
         "o": ["pdis1-", "/en.html", authmode, false],
         "t": ["pdis2-", "/en.html", authmode, false],
-        "e": ["pub-elb-", "/en.html", authmode, false]
+        "e": ["pub-elb-", "/en.html", authmode, false],
+        "c": ["aut1", ":4502/crx/de/index.jsp#/content/", true, longform]
       }[letts.slice(1, 2)];
       pieceone += sact[0], piecetwo += sact[1], [authmode, longform] = sact.slice(2, 4);
       if (longform) {
@@ -171,7 +172,8 @@ function SHOR(evf) {
         "b": "be",
         "c": "corp"
       }[letts.slice(2, 3)];
-      return open(pieceone + piecetwo, newtab);
+      return open(pieceone + piecetwo + (letts.slice(0, 1) == "c" ? "/jcr%3Acontent/mainParsys" :
+        ""), newtab);
     }
   }).then(window.close);
 }
@@ -179,7 +181,7 @@ function SHOR(evf) {
 function SWCH(evf) {
   var newtab = evf.ctrlKey;
   prompt("(a)uthor, author(l)b, publisher(1), publisher(2), " +
-    "dispatcher(o)ne, dispatcher(t)wo, (e)lb, a(k)amai").then(lett => {
+    "dispatcher(o)ne, dispatcher(t)wo, (e)lb, a(k)amai, (c)rxde").then(lett => {
     var exten = {
         "aus": "australia",
         "be": "businessevents",
@@ -194,16 +196,18 @@ function SWCH(evf) {
       return thistab(actvtb => {
         var cref = new URL(actvtb.url),
           loc, site, page, nurl, base = ".tour-aus.aws.haylix.net";
-        loc = cref.href.match(/\/(\w\w([-_]\w\w)?)(\/|$|\?|\.html)/)[1].replace("-", "_");
+        loc = (cref.hash.match(/^#\/content\/.*?\/(\w\w(_\w\w)?)/) || cref.href.match( // Check crx
+          /\/(\w\w([-_]\w\w)?)(\/|$|\?|\.html)/))[1].replace("-", "_"); //first, else you'll get /de
         if (cref.host.match(base)) { // If it's a Haylix-style page
-          nurl = "http://" + cref.host.match(/^(\w+?-)/)[1];
+          nurl = "http://" + cref.host.match(/^(\w+?-)/)[1]; //Environment piece
           if (cref.host.match(/pub-elb|pdis\d/)) {
             site = cref.host.match(/(\pub-elb-|pdis\d-)(\w+?)\./)[2];
             site = exten[site] || site;
             page = cref.pathname.match(/\/(.+?)(\.html|$|\?)/)[1].split("/").slice(1).join(
               "/") + ".html";
           } else {
-            var l = cref.href.match(/\/content\/(.+?)(\.html|$|\?)/)[1].split("/");
+            var l = cref.href.match(/\/content\/(.+?)(\/jcr%3Acontent|\.html|$|\?)/)[1].split(
+              "/");
             site = l[0];
             page = l.slice(2).join("/") + ".html";
           }
@@ -257,6 +261,10 @@ function SWCH(evf) {
           nurl = nurl.match("prod") ? "p" : nurl.match("stage") ? "s" : nurl;
           nurl = akamairl[nurl + site.slice(0, 1)].slice(0, -3) + "/" + loc.replace("_",
             "-") + "/" + page;
+          break;
+        case "c":
+          nurl += "aut1" + base + ":4502/crx/de/index.jsp#/content/" + [site, loc, page.replace(
+            ".html", "/jcr%3Acontent/mainParsys")].join("/");
         }
         return open(nurl, newtab, actvtb.id);
       });

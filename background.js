@@ -7,7 +7,7 @@ fixingtabs = {};
 chrome.webRequest.onBeforeRequest.addListener(detl => {
   var nurl;
   if (fixingtabs[detl.tabId] && ((nurl = new URL(detl.url)).origin.match(/pub\d/) && !nurl.pathname
-      .match(/^\/content\//))) {
+      .match(/^(\/content\/|\/bin\/|\/system\/)/))) {
     return {
       redirectUrl: nurl.origin + "/content/" + fixingtabs[detl.tabId] + nurl.pathname.replace(
         /\/(\w\w)-(\w\w)/, "/$1_$2")
