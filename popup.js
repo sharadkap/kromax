@@ -338,8 +338,9 @@ function MOS(evf) {
   thistab(tab => {
     los.push(new URL(tab.url).href)
   }).then(() => thistab(tab => eval("var z=[];for(x of document.querySelectorAll(" +
-    "\".mosaic .line-through-container-biline > a.type-anchor-title:not([href=\\\"#\\\"])" +
-    ",.sitemap a:not([href=\\\"#\\\"])\")){z.push(x.href);}z;", tab.id).then(resura => {
+    "\".mosaic .line-through-container-biline > a.type-anchor-title:not([href=\\\"#\\\"]),." +
+    "sitemap a:not([href=\\\"#\\\"]),.store-products-item,.thumbnail.scf-linked-resource-title\"" +
+    ")){z.push(x.href);}z;", tab.id).then(resura => {
     var lis = [];
     for (var x of resura[0]) {
       if (!(filt && los.includes(x))) {
