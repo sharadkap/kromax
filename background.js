@@ -10,7 +10,7 @@ chrome.webRequest.onBeforeRequest.addListener(detl => {
       .match(/^(\/content\/|\/bin\/|\/system\/)/))) {
     return {
       redirectUrl: nurl.origin + "/content/" + fixingtabs[detl.tabId] + nurl.pathname.replace(
-        /\/(\w\w)-(\w\w)/, "/$1_$2")
+        /\/(\w\w)-(\w\w)(\/|\.|$)/, "/$1_$2$3")
     };
   }
 }, {
