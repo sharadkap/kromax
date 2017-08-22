@@ -195,7 +195,8 @@ function SWCH(evf) {
     if (lett) {
       return thistab(actvtb => {
         var cref = new URL(actvtb.url),
-          loc, site, page, nurl, base = ".tour-aus.aws.haylix.net";
+          loc, site, page, nurl, base = ".tour-aus.aws.haylix.net",
+          iii = newtab ? actvtb.index + 1 : actvtb.id;
         loc = (cref.hash.match(/^#\/content\/.*?\/(\w\w(_\w\w)?)/) || cref.href.match( // Check crx
           /\/(\w\w([-_]\w\w)?)(\/|$|\?|\.html)/))[1].replace("-", "_"); //first, else you'll get /de
         if (cref.host.match(base)) { // If it's a Haylix-style page
@@ -266,7 +267,7 @@ function SWCH(evf) {
           nurl += "aut1" + base + ":4502/crx/de/index.jsp#/content/" + [site, loc, page.replace(
             ".html", "/jcr%3Acontent/mainParsys")].join("/");
         }
-        return open(nurl, newtab, actvtb.id);
+        return open(nurl, newtab, iii);
       });
     }
   }).then(window.close);
