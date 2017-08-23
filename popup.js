@@ -129,7 +129,18 @@ function SHOR(evf) {
   var newtab = evf.ctrlKey;
   prompt("1: (a)lpha, (d)ev, (u)at, (s)taging, (p)rod\n" +
     "2: (a)uthor, author-(l)b, publisher (1)/(2), dispatcher (o)ne/(t)wo, (e)lb, a(k)amai, (c)rxde\n" +
-    "3: (a)us.com, a(s)p, (i)nv, (b)e, (c)orp").then(letts => {
+    "3: (a)us.com, a(s)p, (i)nv, (b)e, (c)orp").then(doit).then(window.close);
+
+  function doit(letts) {
+    letts = letts.toLowerCase().trim();
+    var mults = [];
+    for (var x of letts[0] === '*' ? 'adusp' : letts[0])
+      for (var y of letts[1] === '*' ? 'al12otekc' : letts[1])
+        for (var z of letts[2] === '*' ? 'asibc' : letts[2]) mults.push(doitte(x + y + z));
+    return Promise.all(mults);
+  }
+
+  function doitte(letts) {
     var pieceone = "http://",
       piecetwo = ".tour-aus.aws.haylix.net",
       longform = true,
@@ -173,15 +184,24 @@ function SHOR(evf) {
         "c": "corp"
       }[letts.slice(2, 3)];
       return open(pieceone + piecetwo + (letts.slice(0, 1) == "c" ? "/jcr%3Acontent/mainParsys" :
-        ""), newtab);
+        ""), newtab, undefined, true);
     }
-  }).then(window.close);
+  }
 }
 
 function SWCH(evf) {
   var newtab = evf.ctrlKey;
   prompt("(a)uthor, author(l)b, publisher(1), publisher(2), " +
-    "dispatcher(o)ne, dispatcher(t)wo, (e)lb, a(k)amai, (c)rxde").then(lett => {
+    "dispatcher(o)ne, dispatcher(t)wo, (e)lb, a(k)amai, (c)rxde").then(doit).then(window.close);
+
+  function doit(lett) {
+    lett = lett.toLowerCase().trim();
+    var mults = [];
+    for (var l of lett === '*' ? 'al12otekc' : lett) mults.push(doitte(l));
+    return Promise.all(mults);
+  }
+
+  function doitte(lett) {
     var exten = {
         "aus": "australia",
         "be": "businessevents",
@@ -204,8 +224,8 @@ function SWCH(evf) {
           if (cref.host.match(/pub-elb|pdis\d/)) {
             site = cref.host.match(/(\pub-elb-|pdis\d-)(\w+?)\./)[2];
             site = exten[site] || site;
-            page = cref.pathname.match(/\/(.+?)(\.html|$|\?)/)[1].split("/").slice(1).join(
-              "/") + ".html";
+            page = cref.pathname.match(/\/(.+?)(\.html|$|\?)/)[1].split("/").slice(1).join("/") +
+              ".html";
           } else {
             var l = cref.href.match(/\/content\/(.+?)(\/jcr%3Acontent|\.html|$|\?)/)[1].split(
               "/");
@@ -226,10 +246,10 @@ function SWCH(evf) {
             "staging.tourism.australia.com": ["stage", "corporate"]
           }[cref.host]
           nurl = "http://" + nurl + "-";
-          page = cref.pathname.match(/\/(.+?)(\.html|$|\?)/)[1].split("/").slice(1).join(
-            "/") + ".html";
+          page = cref.pathname.match(/\/(.+?)(\.html|$|\?)/)[1].split("/").slice(1).join("/") +
+            ".html";
         }
-        switch (lett.toLowerCase().trim()) {
+        switch (lett) {
         case "a":
           nurl += "aut1" + base + ":4502/cf#/content/" + [site, loc, page].join("/");
           break;
@@ -260,17 +280,17 @@ function SWCH(evf) {
         case "k": // Akaimai sites a bit different, mostly hardcoded.
           site = site == "asp" ? "s" : site;
           nurl = nurl.match("prod") ? "p" : nurl.match("stage") ? "s" : nurl;
-          nurl = akamairl[nurl + site.slice(0, 1)].slice(0, -3) + "/" + loc.replace("_",
-            "-") + "/" + page;
+          nurl = akamairl[nurl + site.slice(0, 1)].slice(0, -3) + "/" + loc.replace("_", "-") +
+            "/" + page;
           break;
         case "c":
           nurl += "aut1" + base + ":4502/crx/de/index.jsp#/content/" + [site, loc, page.replace(
             ".html", "/jcr%3Acontent/mainParsys")].join("/");
         }
-        return open(nurl, newtab, iii);
+        return open(nurl, newtab, iii, true);
       });
     }
-  }).then(window.close);
+  }
 }
 
 function RPR(evf) {
