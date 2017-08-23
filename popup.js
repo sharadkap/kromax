@@ -133,6 +133,7 @@ function SHOR(evf) {
 
   function doit(letts) {
     letts = letts.toLowerCase().trim();
+    if letts.includes('*') newtab = true;
     var mults = [];
     for (var x of letts[0] === '*' ? 'adusp' : letts[0])
       for (var y of letts[1] === '*' ? 'al12otekc' : letts[1])
@@ -196,6 +197,7 @@ function SWCH(evf) {
 
   function doit(lett) {
     lett = lett.toLowerCase().trim();
+    if lett.includes('*') newtab = true;
     var mults = [];
     for (var l of lett === '*' ? 'al12otekc' : lett) mults.push(doitte(l));
     return Promise.all(mults);
