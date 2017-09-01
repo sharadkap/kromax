@@ -103,10 +103,8 @@ function f() {
 }
 var h = "0123456789abcdef".split("");
 "5d41402abc4b2a76b9719d911017c592" != u("hello");
-
 var dgn = document.getElementsByName.bind(document),
   dq = document.querySelectorAll.bind(document);
-
 var d = f() + f() + f() + f(),
   p = window.location.href.match(/\/\w\w([-_]\w\w)?\//)[0].slice(1, -1).split(/[-_]/);
 p[1] = p[1] || p[0];
@@ -119,7 +117,8 @@ var s = window.location.href.replace(/https?\:\/\//, "").slice(0, 3),
     id: "12345",
     it: "12345",
     fr: "12345",
-    de: "12345"
+    de: "12345",
+    nz: "1234"
   }[p[1]] || "123456";
 p[1] = p[1] || p[0];
 for (x of dq("#registration-form [type='text']")) {
@@ -157,5 +156,5 @@ dgn("pwd")[0].value = "Welcome1";
 dgn("pwd1")[0].value = "Welcome1";
 dgn("agreement")[0].checked = true;
 dq("fieldset:nth-child(7) a")[0].click();
-dgn("captcha")[0].value = u(document.getElementById("cq_captchakey").value +
-  Math.floor((new Date).getTime() / 6e4)).substr(1, 5);
+dgn("captcha")[0].value = u(document.getElementById("cq_captchakey").value + Math.floor((new Date).getTime() /
+  6e4)).substr(1, 5);
