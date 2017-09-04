@@ -219,20 +219,19 @@ function SWCH(evf) {
         var cref = new URL(actvtb.url),
           loc, site, page, nurl, base = ".tour-aus.aws.haylix.net",
           iii = newtab ? actvtb.index + 1 : actvtb.id;
-        loc = (cref.hash.match(/^#\/content\/.*?\/(\w\w(_\w\w)?)/) || cref.href.match( // Check crx
-          /\/(\w\w([-_]\w\w)?)(\/|$|\?|\.html)/))[1].replace("-", "_"); //first, else you'll get /de
         if (cref.host.match(base)) { // If it's a Haylix-style page
           nurl = "http://" + cref.host.match(/^(\w+?-)/)[1]; //Environment piece
           if (cref.host.match(/pub-elb|pdis\d/)) {
             site = cref.host.match(/(\pub-elb-|pdis\d-)(\w+?)\./)[2];
             site = exten[site] || site;
-            page = cref.pathname.match(/\/(.+?)(\.html|$|\?)/)[1].split("/").slice(1).join("/") +
-              ".html";
+            var ll = cref.pathname.split('/');
+            loc = ll[1];
+            page = ll.slice(2).join("/");
+            page += page.includes('.html') ? '' : '.html';
           } else {
-            var l = cref.href.match(/\/content\/(.+?)(\/jcr%3Acontent|\.html|$|\?)/)[1].split(
-              "/");
-            site = l[0];
-            page = l.slice(2).join("/") + ".html";
+            var l = cref.href.match(/\/content\/(.+?)(\/jcr%3Acontent|\.html|$)/)[1].split("/");
+            [site, loc, ...page] = l;
+            page = page.join("/") + ".html";
           }
         } else { // If it's an Akamai site, do a lookup, there's not so much of a pattern.
           [nurl, site] = {
@@ -248,8 +247,10 @@ function SWCH(evf) {
             "staging.tourism.australia.com": ["stage", "corporate"]
           }[cref.host]
           nurl = "http://" + nurl + "-";
-          page = cref.pathname.match(/\/(.+?)(\.html|$|\?)/)[1].split("/").slice(1).join("/") +
-            ".html";
+          var ll = cref.pathname.split('/');
+          loc = ll[1];
+          page = ll.slice(2).join("/");
+          page += page.includes('.html') ? '' : '.html';
         }
         switch (lett) {
         case "a":
