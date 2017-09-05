@@ -476,9 +476,11 @@ function MUDA(evf) {
   var half = evf.ctrlKey;
   thistab(tab => eval(xss("MUDA", "var o=[\"_core_mod1\",\"_core_mod2\",\"_core_mod3\"," + (half ?
       "" : "\"_sto_vic\",\"_sto_nsw\"") + "],f=location.href.match(/\\/(\\w\\w([-_]\\w\\w)?)" +
-    "(\\/|(\\.html)|$)/)[1],e=f.split(/[-_]/);e=((e[0]==\"es\"&&e[1]==\"cl\")||" +
-    "(e[0]==\"pt\"&&e[1]==\"br\"))?e:e.reverse();e=e.join(\"_\")" +
-    ".replace(\"gb\",\"uk\");o=o.concat(o);for(m in o)if(o.hasOwnProperty(m))" +
-    "$.ajax({url:\"/bin/asp/trainingModule\",type:\"POST\",cache:!1,dataType:\"json\"," +
-    "data:{isComplete:true,moduleId:e+o[m],locale:f}});"), tab.id)).then(window.close);
+    "(\\/|(\\.html)|$)/)[1],e=f.split(/[-_]/),l=[];e=\"es\"==e[0]&&\"cl\"==e[1]||\"pt\"==e[0]&" +
+    "&\"br\"==e[1]?e:e.reverse(),e=e.join(\"_\").replace(\"gb\",\"uk\");for(m in o)o.hasOwn" +
+    "Property(m)&&l.push($.ajax({url:\"/bin/asp/trainingModule\",type:\"POST\",cache:!1," +
+    "dataType:\"json\",data:{isComplete:!1,moduleId:e+o[m],locale:f}}));Promise.all(l).then((" +
+    ")=>{for(m in o)o.hasOwnProperty(m)&&$.ajax({url:\"/bin/asp/trainingModule\",type:\"POST\"," +
+    "cache:!1,dataType:\"json\",data:{isComplete:!0,moduleId:e+o[m],locale:f}})});"), tab.id)).then(
+    window.close);
 }
